@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createBillboardGroup } from './billboard.js';
+import { GifExporter } from './exporter.js';
 
 class LenticularViewer {
     constructor() {
@@ -177,6 +178,7 @@ class LenticularViewer {
         });
 
         previewBtn.addEventListener('click', () => this.playPreview());
+        exportBtn.addEventListener('click', () => this.exportGif());
     }
 
     playPreview() {
@@ -223,6 +225,38 @@ class LenticularViewer {
         };
 
         requestAnimationFrame(animatePreview);
+    }
+
+    async exportGif() {
+        const exportBtn = document.getElementById('exportBtn');
+        const previewBtn = document.getElementById('previewBtn');
+
+        exportBtn.disabled = true;
+        previewBtn.disabled = true;
+        exportBtn.textContent = 'Exporting...';
+
+        const viewport = document.querySelector('.viewport');
+        const exporter = new GifExporter(
+            this.renderer,
+            viewport.clientWidth,
+            viewport.clientHeight
+        );
+
+        try {
+            await exporter.export(
+                this.scene,
+                this.camera,
+                this.orbitControls,
+                this.animationSpeed,
+                (progress) => {
+                    exportBtn.textContent = `Exporting ${Math.round(progress * 100)}%`;
+                }
+            );
+        } finally {
+            exportBtn.textContent = 'Export GIF';
+            exportBtn.disabled = false;
+            previewBtn.disabled = false;
+        }
     }
 
     checkAspectRatios() {
