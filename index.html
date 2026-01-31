@@ -110,9 +110,15 @@
                     <button class="btn" id="previewBtn">Preview</button>
                     <button class="btn" id="resetCameraBtn">Reset Camera</button>
                 </div>
-                <div class="input-control">
-                    <label for="filenameInput">Export filename</label>
-                    <input type="text" id="filenameInput" value="lenticular-preview" placeholder="filename">
+                <div class="input-row">
+                    <div class="input-control">
+                        <label for="filenameInput">Filename</label>
+                        <input type="text" id="filenameInput" value="lenticular-preview" placeholder="filename">
+                    </div>
+                    <div class="input-control input-control-small">
+                        <label for="gifWidthInput">Max Width</label>
+                        <input type="number" id="gifWidthInput" value="700" min="200" max="1920" step="50">
+                    </div>
                 </div>
                 <button class="btn btn-primary" id="exportBtn" disabled>Export GIF</button>
             </section>

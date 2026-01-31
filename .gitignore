@@ -20,3 +20,4 @@ dist/
 references/
 board_specs/
 images/
+.vercel

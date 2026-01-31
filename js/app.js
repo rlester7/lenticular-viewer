@@ -99,15 +99,21 @@ class LenticularViewer {
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0x1a1a1a);
 
+        // Perspective camera with longer focal length (less distortion)
+        // FOV 25° ≈ 85mm lens equivalent, much less distortion than default 50°
         this.camera = new THREE.PerspectiveCamera(
-            50,
+            25,
             viewport.clientWidth / viewport.clientHeight,
             0.1,
             1000
         );
-        this.camera.position.set(0, 0, 5);
+        // Move camera back to compensate for narrower FOV
+        this.camera.position.set(0, 0, 12);
 
-        this.renderer = new THREE.WebGLRenderer({ antialias: true });
+        this.renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            preserveDrawingBuffer: true  // Required for GIF export to read canvas
+        });
         this.renderer.setSize(viewport.clientWidth, viewport.clientHeight);
         this.renderer.setPixelRatio(window.devicePixelRatio);
         viewport.appendChild(this.renderer.domElement);
@@ -308,6 +314,7 @@ class LenticularViewer {
         showGrid.addEventListener('change', (e) => {
             this.grid.visible = e.target.checked;
         });
+
     }
 
     applyPreset(presetId) {
@@ -395,7 +402,7 @@ class LenticularViewer {
 
         const resetCameraBtn = document.getElementById('resetCameraBtn');
         resetCameraBtn.addEventListener('click', () => {
-            this.camera.position.set(0, 0, 5);
+            this.camera.position.set(0, 0, 12);
             this.camera.lookAt(0, 0, 0);
             this.orbitControls.reset();
         });
@@ -502,19 +509,16 @@ class LenticularViewer {
         const exportBtn = document.getElementById('exportBtn');
         const previewBtn = document.getElementById('previewBtn');
         const filenameInput = document.getElementById('filenameInput');
+        const gifWidthInput = document.getElementById('gifWidthInput');
 
         exportBtn.disabled = true;
         previewBtn.disabled = true;
         exportBtn.textContent = 'Exporting...';
 
-        const viewport = document.querySelector('.viewport');
-        const exporter = new GifExporter(
-            this.renderer,
-            viewport.clientWidth,
-            viewport.clientHeight
-        );
+        const exporter = new GifExporter(this.renderer);
 
         const filename = filenameInput.value.trim() || 'lenticular-preview';
+        const maxWidth = parseInt(gifWidthInput.value) || 700;
 
         try {
             await exporter.export(
@@ -528,7 +532,8 @@ class LenticularViewer {
                 this.settings.width,
                 this.settings.height,
                 this.sweepAngle,
-                filename
+                filename,
+                maxWidth
             );
         } finally {
             exportBtn.textContent = 'Export GIF';

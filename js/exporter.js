@@ -1,34 +1,36 @@
 export class GifExporter {
-    constructor(renderer, width, height) {
+    constructor(renderer) {
         this.renderer = renderer;
-        this.width = width;
-        this.height = height;
     }
 
-    async export(scene, camera, orbitControls, speed, onProgress, billboardWidth, billboardHeight, sweepAngleDegrees, filename) {
+    async export(scene, camera, orbitControls, speed, onProgress, billboardWidth, billboardHeight, sweepAngleDegrees, filename, maxWidth = 700) {
         return new Promise((resolve, reject) => {
+            // Use actual canvas dimensions (accounts for devicePixelRatio)
+            const canvas = this.renderer.domElement;
+            const width = canvas.width;
+            const height = canvas.height;
+
             // Crop viewport to match billboard aspect ratio
             const billboardAspect = billboardWidth / billboardHeight;
-            const viewportAspect = this.width / this.height;
+            const viewportAspect = width / height;
 
             let cropWidth, cropHeight, cropX, cropY;
 
             if (viewportAspect > billboardAspect) {
                 // Viewport is wider than billboard - crop sides
-                cropHeight = this.height;
-                cropWidth = Math.floor(this.height * billboardAspect);
-                cropX = Math.floor((this.width - cropWidth) / 2);
+                cropHeight = height;
+                cropWidth = Math.floor(height * billboardAspect);
+                cropX = Math.floor((width - cropWidth) / 2);
                 cropY = 0;
             } else {
                 // Viewport is taller than billboard - crop top/bottom
-                cropWidth = this.width;
-                cropHeight = Math.floor(this.width / billboardAspect);
+                cropWidth = width;
+                cropHeight = Math.floor(width / billboardAspect);
                 cropX = 0;
-                cropY = Math.floor((this.height - cropHeight) / 2);
+                cropY = Math.floor((height - cropHeight) / 2);
             }
 
-            // Scale down to max 700px width
-            const maxWidth = 700;
+            // Scale down to max width
             const scale = Math.min(1, maxWidth / cropWidth);
             const outputWidth = Math.floor(cropWidth * scale);
             const outputHeight = Math.floor(cropHeight * scale);
@@ -58,6 +60,7 @@ export class GifExporter {
                 const progress = i / frameCount;
                 const angle = -Math.cos(progress * Math.PI * 2) * (sweepAngle / 2);
 
+                // Set camera position on orbit (matches preview animation exactly)
                 camera.position.x = Math.sin(angle) * distance;
                 camera.position.z = Math.cos(angle) * distance;
                 camera.lookAt(0, 0, 0);

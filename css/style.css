@@ -204,6 +204,10 @@ html, body {
     margin-bottom: 12px;
 }
 
+.input-control-small {
+    flex: 0 0 80px;
+}
+
 .checkbox-control {
     display: flex;
     align-items: center;
