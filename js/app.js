@@ -13,6 +13,7 @@ class LenticularViewer {
 
         this.initScene();
         this.initControls();
+        this.initUploadZones();
         this.animate();
     }
 
@@ -70,6 +71,66 @@ class LenticularViewer {
         this.orbitControls.maxPolarAngle = Math.PI / 2;
         this.orbitControls.enableZoom = true;
         this.orbitControls.enablePan = false;
+    }
+
+    initUploadZones() {
+        const setupZone = (zoneId, fileInputId, imageKey) => {
+            const zone = document.getElementById(zoneId);
+            const fileInput = document.getElementById(fileInputId);
+            const preview = zone.querySelector('.upload-preview');
+
+            zone.addEventListener('click', () => fileInput.click());
+
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('dragover');
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('dragover');
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    this.loadImage(file, imageKey, preview, zone);
+                }
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    this.loadImage(file, imageKey, preview, zone);
+                }
+            });
+        };
+
+        setupZone('uploadA', 'fileA', 'textureA');
+        setupZone('uploadB', 'fileB', 'textureB');
+    }
+
+    loadImage(file, textureKey, previewEl, zoneEl) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const url = e.target.result;
+            previewEl.src = url;
+            zoneEl.classList.add('has-image');
+
+            const loader = new THREE.TextureLoader();
+            loader.load(url, (texture) => {
+                texture.colorSpace = THREE.SRGBColorSpace;
+                this[textureKey] = texture;
+                this.updateBillboard();
+            });
+        };
+        reader.readAsDataURL(file);
+    }
+
+    updateBillboard() {
+        // TODO: Implement in Task 5
+        console.log('Textures loaded:', { textureA: this.textureA, textureB: this.textureB });
     }
 
     onResize() {

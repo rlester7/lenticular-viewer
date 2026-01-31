@@ -38,3 +38,67 @@ html, body {
 .viewport canvas {
     display: block;
 }
+
+.control-group {
+    margin-bottom: 24px;
+}
+
+.control-group h2 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #888;
+    margin-bottom: 12px;
+}
+
+.upload-zone {
+    border: 2px dashed #444;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+    position: relative;
+    min-height: 80px;
+}
+
+.upload-zone:hover {
+    border-color: #666;
+    background: #2a2a2a;
+}
+
+.upload-zone.dragover {
+    border-color: #4a90d9;
+    background: rgba(74, 144, 217, 0.1);
+}
+
+.upload-zone.has-image .upload-content {
+    display: none;
+}
+
+.upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.upload-label {
+    font-weight: 500;
+}
+
+.upload-hint {
+    font-size: 12px;
+    color: #666;
+}
+
+.upload-preview {
+    display: none;
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.upload-zone.has-image .upload-preview {
+    display: block;
+}

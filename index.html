@@ -10,7 +10,26 @@
     <div class="app">
         <aside class="controls">
             <h1>Lenticular Viewer</h1>
-            <!-- Controls will go here -->
+
+            <section class="control-group">
+                <h2>Images</h2>
+                <div class="upload-zone" id="uploadA">
+                    <input type="file" id="fileA" accept="image/*" hidden>
+                    <div class="upload-content">
+                        <span class="upload-label">Image A</span>
+                        <span class="upload-hint">Drop image or click</span>
+                    </div>
+                    <img class="upload-preview" alt="">
+                </div>
+                <div class="upload-zone" id="uploadB">
+                    <input type="file" id="fileB" accept="image/*" hidden>
+                    <div class="upload-content">
+                        <span class="upload-label">Image B</span>
+                        <span class="upload-hint">Drop image or click</span>
+                    </div>
+                    <img class="upload-preview" alt="">
+                </div>
+            </section>
         </aside>
         <main class="viewport">
             <!-- Three.js canvas will go here -->
