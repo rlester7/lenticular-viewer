@@ -1,5 +1,26 @@
 import * as THREE from 'three';
 
+export function createCheckerboardTexture(color1 = 0x333333, color2 = 0x444444, size = 8) {
+    const canvas = document.createElement('canvas');
+    canvas.width = size * 8;
+    canvas.height = size * 8;
+    const ctx = canvas.getContext('2d');
+
+    for (let y = 0; y < 8; y++) {
+        for (let x = 0; x < 8; x++) {
+            const isEven = (x + y) % 2 === 0;
+            ctx.fillStyle = isEven ? `#${color1.toString(16).padStart(6, '0')}` : `#${color2.toString(16).padStart(6, '0')}`;
+            ctx.fillRect(x * size, y * size, size, size);
+        }
+    }
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(4, 4);
+    return texture;
+}
+
 export function createZigzagGeometry(width, height, slats, angle) {
     // Convert angle from degrees to radians
     const angleRad = (angle * Math.PI) / 180;
@@ -92,17 +113,21 @@ export function createBillboardGroup(width, height, slats, angle, textureA = nul
 
     const group = new THREE.Group();
 
+    // Create placeholder textures if none provided
+    const placeholderA = createCheckerboardTexture(0x3a5a8a, 0x4a6a9a);
+    const placeholderB = createCheckerboardTexture(0x8a3a3a, 0x9a4a4a);
+
     // Material for left faces (Image A)
     const materialA = new THREE.MeshStandardMaterial({
-        color: textureA ? 0xffffff : 0x4a90d9,
-        map: textureA,
+        color: 0xffffff,
+        map: textureA || placeholderA,
         side: THREE.FrontSide
     });
 
     // Material for right faces (Image B)
     const materialB = new THREE.MeshStandardMaterial({
-        color: textureB ? 0xffffff : 0xd94a4a,
-        map: textureB,
+        color: 0xffffff,
+        map: textureB || placeholderB,
         side: THREE.FrontSide
     });
 
