@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { createBillboardMesh } from './billboard.js';
+import { createBillboardGroup } from './billboard.js';
 
 class LenticularViewer {
     constructor() {
@@ -50,7 +50,7 @@ class LenticularViewer {
         this.scene.add(grid);
 
         // Billboard mesh
-        this.billboard = createBillboardMesh(
+        this.billboard = createBillboardGroup(
             this.settings.width,
             this.settings.height,
             this.settings.slats,
