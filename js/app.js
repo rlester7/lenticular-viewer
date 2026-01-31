@@ -193,17 +193,17 @@ class LenticularViewer {
         const originalAzimuth = this.orbitControls.getAzimuthalAngle();
         const distance = this.camera.position.length();
 
-        // Animation parameters - sweep from center (azimuth 0)
+        // Animation parameters
         const duration = 3000 / (this.animationSpeed / 5); // Base 3 seconds at speed 5
         const startTime = performance.now();
-        const sweepAngle = Math.PI * 0.5; // 90 degrees total sweep (±45° from center)
+        const sweepAngle = Math.PI * (100 / 180); // 100 degrees total sweep (±50° from center)
 
         const animatePreview = (currentTime) => {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
 
-            // Sweep left to right from center using sine wave
-            const angle = Math.sin(progress * Math.PI * 2) * (sweepAngle / 2);
+            // Start left, sweep to right, return to left using cosine
+            const angle = -Math.cos(progress * Math.PI * 2) * (sweepAngle / 2);
 
             // Set camera position on orbit (stays in front of billboard)
             this.camera.position.x = Math.sin(angle) * distance;

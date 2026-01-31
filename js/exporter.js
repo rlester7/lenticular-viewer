@@ -17,14 +17,14 @@ export class GifExporter {
 
             const frameCount = 30;
             const duration = 3000 / (speed / 5);
-            const sweepAngle = Math.PI * 0.5; // 90 degrees total sweep (±45° from center)
+            const sweepAngle = Math.PI * (100 / 180); // 100 degrees total sweep (±50° from center)
             const originalAzimuth = orbitControls.getAzimuthalAngle();
             const distance = camera.position.length();
 
-            // Capture frames - sweep from center (azimuth 0)
+            // Capture frames - start left, sweep to right, return to left
             for (let i = 0; i < frameCount; i++) {
                 const progress = i / frameCount;
-                const angle = Math.sin(progress * Math.PI * 2) * (sweepAngle / 2);
+                const angle = -Math.cos(progress * Math.PI * 2) * (sweepAngle / 2);
 
                 camera.position.x = Math.sin(angle) * distance;
                 camera.position.z = Math.cos(angle) * distance;
