@@ -102,3 +102,83 @@ html, body {
 .upload-zone.has-image .upload-preview {
     display: block;
 }
+
+.slider-control {
+    margin-bottom: 16px;
+}
+
+.slider-control label {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.slider-row input[type="range"] {
+    flex: 1;
+    height: 4px;
+    -webkit-appearance: none;
+    background: #444;
+    border-radius: 2px;
+    outline: none;
+}
+
+.slider-row input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.slider-value {
+    min-width: 36px;
+    text-align: right;
+    font-size: 13px;
+    color: #888;
+}
+
+.input-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.input-control {
+    flex: 1;
+}
+
+.input-control label {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.input-control input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    background: #333;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.checkbox-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.checkbox-control input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+}

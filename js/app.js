@@ -17,6 +17,7 @@ class LenticularViewer {
         this.initScene();
         this.initControls();
         this.initUploadZones();
+        this.initSettingsControls();
         this.animate();
     }
 
@@ -112,6 +113,50 @@ class LenticularViewer {
 
         setupZone('uploadA', 'fileA', 'textureA');
         setupZone('uploadB', 'fileB', 'textureB');
+    }
+
+    initSettingsControls() {
+        const slatsSlider = document.getElementById('slatsSlider');
+        const slatsValue = document.getElementById('slatsValue');
+        const angleSlider = document.getElementById('angleSlider');
+        const angleValue = document.getElementById('angleValue');
+        const widthInput = document.getElementById('widthInput');
+        const heightInput = document.getElementById('heightInput');
+        const lockAspect = document.getElementById('lockAspect');
+
+        slatsSlider.addEventListener('input', (e) => {
+            this.settings.slats = parseInt(e.target.value);
+            slatsValue.textContent = this.settings.slats;
+            this.updateBillboard();
+        });
+
+        angleSlider.addEventListener('input', (e) => {
+            this.settings.angle = parseInt(e.target.value);
+            angleValue.textContent = this.settings.angle + '°';
+            this.updateBillboard();
+        });
+
+        widthInput.addEventListener('input', (e) => {
+            const newWidth = parseFloat(e.target.value) || 1;
+            if (lockAspect.checked) {
+                const ratio = this.settings.height / this.settings.width;
+                this.settings.height = newWidth * ratio;
+                heightInput.value = this.settings.height.toFixed(1);
+            }
+            this.settings.width = newWidth;
+            this.updateBillboard();
+        });
+
+        heightInput.addEventListener('input', (e) => {
+            const newHeight = parseFloat(e.target.value) || 1;
+            if (lockAspect.checked) {
+                const ratio = this.settings.width / this.settings.height;
+                this.settings.width = newHeight * ratio;
+                widthInput.value = this.settings.width.toFixed(1);
+            }
+            this.settings.height = newHeight;
+            this.updateBillboard();
+        });
     }
 
     loadImage(file, textureKey, previewEl, zoneEl) {
