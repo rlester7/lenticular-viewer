@@ -189,23 +189,23 @@ class LenticularViewer {
         const exportBtn = document.getElementById('exportBtn');
         previewBtn.disabled = true;
 
-        // Store original camera position
-        const startAzimuth = this.orbitControls.getAzimuthalAngle();
+        // Store original camera position to restore after animation
+        const originalAzimuth = this.orbitControls.getAzimuthalAngle();
+        const distance = this.camera.position.length();
 
-        // Animation parameters
+        // Animation parameters - sweep from center (azimuth 0)
         const duration = 3000 / (this.animationSpeed / 5); // Base 3 seconds at speed 5
         const startTime = performance.now();
-        const sweepAngle = Math.PI * 0.8; // 144 degrees total sweep
+        const sweepAngle = Math.PI * 0.5; // 90 degrees total sweep (±45° from center)
 
         const animatePreview = (currentTime) => {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
 
-            // Ease in-out sine wave for smooth back-and-forth
-            const angle = startAzimuth + Math.sin(progress * Math.PI * 2) * (sweepAngle / 2);
+            // Sweep left to right from center using sine wave
+            const angle = Math.sin(progress * Math.PI * 2) * (sweepAngle / 2);
 
-            // Set camera position on orbit
-            const distance = this.camera.position.length();
+            // Set camera position on orbit (stays in front of billboard)
             this.camera.position.x = Math.sin(angle) * distance;
             this.camera.position.z = Math.cos(angle) * distance;
             this.camera.lookAt(0, 0, 0);
@@ -218,8 +218,8 @@ class LenticularViewer {
                 exportBtn.disabled = false;
 
                 // Reset to original position
-                this.camera.position.x = Math.sin(startAzimuth) * distance;
-                this.camera.position.z = Math.cos(startAzimuth) * distance;
+                this.camera.position.x = Math.sin(originalAzimuth) * distance;
+                this.camera.position.z = Math.cos(originalAzimuth) * distance;
                 this.camera.lookAt(0, 0, 0);
             }
         };
