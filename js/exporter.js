@@ -5,19 +5,51 @@ export class GifExporter {
         this.height = height;
     }
 
-    async export(scene, camera, orbitControls, speed, onProgress) {
+    async export(scene, camera, orbitControls, speed, onProgress, billboardWidth, billboardHeight, sweepAngleDegrees, filename) {
         return new Promise((resolve, reject) => {
+            // Crop viewport to match billboard aspect ratio
+            const billboardAspect = billboardWidth / billboardHeight;
+            const viewportAspect = this.width / this.height;
+
+            let cropWidth, cropHeight, cropX, cropY;
+
+            if (viewportAspect > billboardAspect) {
+                // Viewport is wider than billboard - crop sides
+                cropHeight = this.height;
+                cropWidth = Math.floor(this.height * billboardAspect);
+                cropX = Math.floor((this.width - cropWidth) / 2);
+                cropY = 0;
+            } else {
+                // Viewport is taller than billboard - crop top/bottom
+                cropWidth = this.width;
+                cropHeight = Math.floor(this.width / billboardAspect);
+                cropX = 0;
+                cropY = Math.floor((this.height - cropHeight) / 2);
+            }
+
+            // Scale down to max 700px width
+            const maxWidth = 700;
+            const scale = Math.min(1, maxWidth / cropWidth);
+            const outputWidth = Math.floor(cropWidth * scale);
+            const outputHeight = Math.floor(cropHeight * scale);
+
             const gif = new GIF({
                 workers: 2,
-                quality: 10,
-                width: this.width,
-                height: this.height,
-                workerScript: 'https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js'
+                quality: 5,
+                width: outputWidth,
+                height: outputHeight,
+                workerScript: 'js/gif.worker.js'
             });
 
-            const frameCount = 30;
+            // Create a temporary canvas for cropping and scaling
+            const cropCanvas = document.createElement('canvas');
+            cropCanvas.width = outputWidth;
+            cropCanvas.height = outputHeight;
+            const cropCtx = cropCanvas.getContext('2d', { willReadFrequently: true });
+
+            const frameCount = 120;
             const duration = 3000 / (speed / 5);
-            const sweepAngle = Math.PI * (100 / 180); // 100 degrees total sweep (±50° from center)
+            const sweepAngle = Math.PI * (sweepAngleDegrees / 180);
             const originalAzimuth = orbitControls.getAzimuthalAngle();
             const distance = camera.position.length();
 
@@ -32,8 +64,10 @@ export class GifExporter {
 
                 this.renderer.render(scene, camera);
 
+                // Crop and scale the frame
                 const canvas = this.renderer.domElement;
-                gif.addFrame(canvas, { copy: true, delay: duration / frameCount });
+                cropCtx.drawImage(canvas, cropX, cropY, cropWidth, cropHeight, 0, 0, outputWidth, outputHeight);
+                gif.addFrame(cropCanvas, { copy: true, delay: duration / frameCount });
 
                 if (onProgress) {
                     onProgress((i + 1) / frameCount * 0.5); // First 50% is frame capture
@@ -55,7 +89,7 @@ export class GifExporter {
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'lenticular-preview.gif';
+                a.download = `${filename}.gif`;
                 a.click();
                 URL.revokeObjectURL(url);
                 resolve();

@@ -6,6 +6,7 @@
 
 html, body {
     height: 100%;
+    overflow: hidden;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: #1a1a1a;
     color: #fff;
@@ -33,10 +34,14 @@ html, body {
 .viewport {
     flex: 1;
     position: relative;
+    overflow: hidden;
 }
 
 .viewport canvas {
     display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .control-group {
@@ -174,7 +179,9 @@ html, body {
     margin-bottom: 6px;
 }
 
-.input-control input[type="number"] {
+.input-control input[type="number"],
+.input-control input[type="text"],
+.input-control select {
     width: 100%;
     padding: 8px;
     background: #333;
@@ -184,17 +191,36 @@ html, body {
     font-size: 14px;
 }
 
+.input-control select {
+    cursor: pointer;
+}
+
+.input-control select option {
+    background: #333;
+    color: #fff;
+}
+
+.input-control {
+    margin-bottom: 12px;
+}
+
 .checkbox-control {
     display: flex;
     align-items: center;
     gap: 8px;
     font-size: 13px;
     cursor: pointer;
+    margin-bottom: 8px;
+}
+
+.checkbox-control:last-child {
+    margin-bottom: 12px;
 }
 
 .checkbox-control input[type="checkbox"] {
     width: 16px;
     height: 16px;
+    flex-shrink: 0;
 }
 
 .btn {
@@ -220,6 +246,22 @@ html, body {
     cursor: not-allowed;
 }
 
+.btn-small {
+    padding: 8px 12px;
+    font-size: 12px;
+}
+
+.button-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.button-row .btn {
+    flex: 1;
+    margin-bottom: 0;
+}
+
 .btn-primary {
     background: #4a90d9;
 }
@@ -243,4 +285,62 @@ html, body {
 
 .empty-state[hidden] {
     display: none;
+}
+
+.safezone-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 10;
+    visibility: hidden;
+}
+
+.safezone-overlay.visible {
+    visibility: visible;
+}
+
+.safezone-mask {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.safezone-top {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+}
+
+.safezone-bottom {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+}
+
+.safezone-left {
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+}
+
+.safezone-right {
+    right: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+}
+
+.safezone-border {
+    position: absolute;
+    border: 2px dashed rgba(255, 255, 255, 0.5);
+    box-sizing: border-box;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
 }

@@ -1,0 +1,22 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build/cache
+.vite/
+node_modules/
+dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local files
+*.local
+
+# Reference materials (large files)
+references/
+board_specs/
+images/
