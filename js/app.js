@@ -16,10 +16,14 @@ class LenticularViewer {
         this.imageAspectA = null;
         this.imageAspectB = null;
 
+        this.isAnimating = false;
+        this.animationSpeed = 5;
+
         this.initScene();
         this.initControls();
         this.initUploadZones();
         this.initSettingsControls();
+        this.initAnimationControls();
         this.animate();
     }
 
@@ -159,6 +163,66 @@ class LenticularViewer {
             this.settings.height = newHeight;
             this.updateBillboard();
         });
+    }
+
+    initAnimationControls() {
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+        const previewBtn = document.getElementById('previewBtn');
+        const exportBtn = document.getElementById('exportBtn');
+
+        speedSlider.addEventListener('input', (e) => {
+            this.animationSpeed = parseInt(e.target.value);
+            speedValue.textContent = this.animationSpeed;
+        });
+
+        previewBtn.addEventListener('click', () => this.playPreview());
+    }
+
+    playPreview() {
+        if (this.isAnimating) return;
+
+        this.isAnimating = true;
+        const previewBtn = document.getElementById('previewBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        previewBtn.disabled = true;
+
+        // Store original camera position
+        const startAzimuth = this.orbitControls.getAzimuthalAngle();
+
+        // Animation parameters
+        const duration = 3000 / (this.animationSpeed / 5); // Base 3 seconds at speed 5
+        const startTime = performance.now();
+        const sweepAngle = Math.PI * 0.8; // 144 degrees total sweep
+
+        const animatePreview = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            // Ease in-out sine wave for smooth back-and-forth
+            const angle = startAzimuth + Math.sin(progress * Math.PI * 2) * (sweepAngle / 2);
+
+            // Set camera position on orbit
+            const distance = this.camera.position.length();
+            this.camera.position.x = Math.sin(angle) * distance;
+            this.camera.position.z = Math.cos(angle) * distance;
+            this.camera.lookAt(0, 0, 0);
+
+            if (progress < 1) {
+                requestAnimationFrame(animatePreview);
+            } else {
+                this.isAnimating = false;
+                previewBtn.disabled = false;
+                exportBtn.disabled = false;
+
+                // Reset to original position
+                this.camera.position.x = Math.sin(startAzimuth) * distance;
+                this.camera.position.z = Math.cos(startAzimuth) * distance;
+                this.camera.lookAt(0, 0, 0);
+            }
+        };
+
+        requestAnimationFrame(animatePreview);
     }
 
     checkAspectRatios() {

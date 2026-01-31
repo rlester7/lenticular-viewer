@@ -69,6 +69,19 @@
                     <span>Lock aspect ratio</span>
                 </label>
             </section>
+
+            <section class="control-group">
+                <h2>Animation</h2>
+                <div class="slider-control">
+                    <label for="speedSlider">Speed</label>
+                    <div class="slider-row">
+                        <input type="range" id="speedSlider" min="1" max="10" value="5">
+                        <span class="slider-value" id="speedValue">5</span>
+                    </div>
+                </div>
+                <button class="btn" id="previewBtn">Preview Animation</button>
+                <button class="btn btn-primary" id="exportBtn" disabled>Export GIF</button>
+            </section>
         </aside>
         <main class="viewport">
             <!-- Three.js canvas will go here -->
