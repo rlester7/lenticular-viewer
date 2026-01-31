@@ -1,8 +1,16 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { createBillboardMesh } from './billboard.js';
 
 class LenticularViewer {
     constructor() {
+        this.settings = {
+            width: 2,
+            height: 1.5,
+            slats: 20,
+            angle: 45
+        };
+
         this.initScene();
         this.initControls();
         this.animate();
@@ -41,11 +49,14 @@ class LenticularViewer {
         grid.position.z = -0.5;
         this.scene.add(grid);
 
-        // Placeholder cube (will be replaced with zigzag)
-        const geometry = new THREE.BoxGeometry(2, 1.5, 0.1);
-        const material = new THREE.MeshStandardMaterial({ color: 0x444444 });
-        this.mesh = new THREE.Mesh(geometry, material);
-        this.scene.add(this.mesh);
+        // Billboard mesh
+        this.billboard = createBillboardMesh(
+            this.settings.width,
+            this.settings.height,
+            this.settings.slats,
+            this.settings.angle
+        );
+        this.scene.add(this.billboard);
 
         // Handle resize
         window.addEventListener('resize', () => this.onResize());
