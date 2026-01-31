@@ -40,9 +40,10 @@ export function createZigzagGeometry(width, height, slats, angle) {
         const xMid = ((i + 0.5) / slats) * width - width / 2;
         const xRight = ((i + 1) / slats) * width - width / 2;
 
-        const uLeft = i / slats;
-        const uMid = (i + 0.5) / slats;
-        const uRight = (i + 1) / slats;
+        // UV coordinates - each face type maps the full slat width
+        // so each image appears complete when viewed from correct angle
+        const uStart = i / slats;
+        const uEnd = (i + 1) / slats;
 
         // Left face: valley to peak (shows Image A from the left)
         // Triangle 1: bottom-left, bottom-mid, top-left
@@ -52,9 +53,9 @@ export function createZigzagGeometry(width, height, slats, angle) {
             xLeft, height / 2, 0
         );
         leftUvs.push(
-            uLeft, 0,
-            uMid, 0,
-            uLeft, 1
+            uStart, 0,
+            uEnd, 0,
+            uStart, 1
         );
 
         // Triangle 2: top-left, bottom-mid, top-mid
@@ -64,9 +65,9 @@ export function createZigzagGeometry(width, height, slats, angle) {
             xMid, height / 2, peakDepth
         );
         leftUvs.push(
-            uLeft, 1,
-            uMid, 0,
-            uMid, 1
+            uStart, 1,
+            uEnd, 0,
+            uEnd, 1
         );
 
         // Right face: peak to valley (shows Image B from the right)
@@ -77,9 +78,9 @@ export function createZigzagGeometry(width, height, slats, angle) {
             xMid, height / 2, peakDepth
         );
         rightUvs.push(
-            uMid, 0,
-            uRight, 0,
-            uMid, 1
+            uStart, 0,
+            uEnd, 0,
+            uStart, 1
         );
 
         // Triangle 2: top-mid, bottom-right, top-right
@@ -89,9 +90,9 @@ export function createZigzagGeometry(width, height, slats, angle) {
             xRight, height / 2, 0
         );
         rightUvs.push(
-            uMid, 1,
-            uRight, 0,
-            uRight, 1
+            uStart, 1,
+            uEnd, 0,
+            uEnd, 1
         );
     }
 
