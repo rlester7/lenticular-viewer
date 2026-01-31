@@ -13,6 +13,8 @@ class LenticularViewer {
 
         this.textureA = null;
         this.textureB = null;
+        this.imageAspectA = null;
+        this.imageAspectB = null;
 
         this.initScene();
         this.initControls();
@@ -159,12 +161,34 @@ class LenticularViewer {
         });
     }
 
+    checkAspectRatios() {
+        const warning = document.getElementById('aspectWarning');
+        if (this.imageAspectA && this.imageAspectB) {
+            const diff = Math.abs(this.imageAspectA - this.imageAspectB);
+            warning.hidden = diff < 0.05; // 5% tolerance
+        } else {
+            warning.hidden = true;
+        }
+    }
+
     loadImage(file, textureKey, previewEl, zoneEl) {
         const reader = new FileReader();
         reader.onload = (e) => {
             const url = e.target.result;
             previewEl.src = url;
             zoneEl.classList.add('has-image');
+
+            const img = new Image();
+            img.onload = () => {
+                const aspect = img.width / img.height;
+                if (textureKey === 'textureA') {
+                    this.imageAspectA = aspect;
+                } else {
+                    this.imageAspectB = aspect;
+                }
+                this.checkAspectRatios();
+            };
+            img.src = url;
 
             const loader = new THREE.TextureLoader();
             loader.load(url, (texture) => {
