@@ -275,6 +275,7 @@ class LenticularViewer {
             const url = e.target.result;
             previewEl.src = url;
             zoneEl.classList.add('has-image');
+            document.getElementById('emptyState').hidden = true;
 
             const img = new Image();
             img.onload = () => {

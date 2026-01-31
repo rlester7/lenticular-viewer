@@ -227,3 +227,20 @@ html, body {
 .btn-primary:hover:not(:disabled) {
     background: #5aa0e9;
 }
+
+.empty-state {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #888;
+    pointer-events: none;
+}
+
+.empty-state[hidden] {
+    display: none;
+}
