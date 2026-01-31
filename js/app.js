@@ -11,6 +11,9 @@ class LenticularViewer {
             angle: 45
         };
 
+        this.textureA = null;
+        this.textureB = null;
+
         this.initScene();
         this.initControls();
         this.initUploadZones();
@@ -129,8 +132,25 @@ class LenticularViewer {
     }
 
     updateBillboard() {
-        // TODO: Implement in Task 5
-        console.log('Textures loaded:', { textureA: this.textureA, textureB: this.textureB });
+        // Remove old billboard
+        if (this.billboard) {
+            this.scene.remove(this.billboard);
+            this.billboard.userData.leftMesh.geometry.dispose();
+            this.billboard.userData.rightMesh.geometry.dispose();
+            this.billboard.userData.materialA.dispose();
+            this.billboard.userData.materialB.dispose();
+        }
+
+        // Create new billboard with current settings and textures
+        this.billboard = createBillboardGroup(
+            this.settings.width,
+            this.settings.height,
+            this.settings.slats,
+            this.settings.angle,
+            this.textureA || null,
+            this.textureB || null
+        );
+        this.scene.add(this.billboard);
     }
 
     onResize() {
